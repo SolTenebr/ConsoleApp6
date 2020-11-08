@@ -10,7 +10,7 @@ namespace ConsoleApp6
             Console.WriteLine($"Коту по имени {cat.Name} уже {cat.GetAge()} лет");
             cat.HungryStatus = 150;
             cat.HungryStatusChanged += Cat_HungryStatusChanged;
-            Cat cat2 = new Cat("Kit", new DateTime(2005, 8, 7));
+            Cat cat2 = new Cat("ALKATRAZ", new DateTime(2005, 8, 7));
             Console.WriteLine($"Коту по имени {cat2.Name} уже {cat2.GetAge()} лет");
             cat2.HungryStatusChanged += Cat2_HungryStatusChanged;
             Console.ReadLine();
