@@ -4,59 +4,59 @@ using System.Text;
 
 namespace ConsoleApp6
 {
-    namespace ConsoleApp6
+    class CatSmartHouse
     {
-        class CatSmartHouse
+        static object printing = true;
+
+        List<Cat> cats = new List<Cat>();
+        public CatSmartHouse(int foodResourse)
         {
-            static object printing = true;
+            FoodResourse = foodResourse;
+        }
+        public int FoodResourse { get; set; }
 
-            List<Cat> cats = new List<Cat>();
-            public CatSmartHouse(int foodResourse)
+        public void AddCat(Cat cat)
+        {
+            cats.Add(cat);
+            cat.HungryStatusChanged += Cat_HungryStatusChanged;
+        }
+
+        public int CatsCount
+        {
+            get
             {
-                FoodResourse = foodResourse;
+                return cats.Count;
             }
-            public int FoodResourse { get; set; }
+        }
 
-            public void AddCat(Cat cat)
+        private void Cat_HungryStatusChanged(object sender, EventArgs e)
+        {
+            var cat = (Cat)sender;
+            if (cat.HungryStatus <= 20 && FoodResourse > 0)
             {
-                cats.Add(cat);
-                cat.HungryStatusChanged += Cat_HungryStatusChanged;
-            }
-
-            public int CatsCount
-            {
-                get
+                byte needFood = (byte)(100 - cat.HungryStatus);
+                if (FoodResourse > needFood)
+                    FoodResourse -= needFood;
+                else
                 {
-                    return cats.Count;
+                    needFood = (byte)FoodResourse;
+                    FoodResourse = 0;
                 }
+                cat.Feed(needFood);
+
+                PrintStatus();
             }
+        }
+        public void PrintStatus()
 
-            private void Cat_HungryStatusChanged(object sender, EventArgs e)
-            {
-                var cat = (Cat)sender;
-                if (cat.HungryStatus <= 20 && FoodResourse > 0)
-                {
-                    byte needFood = (byte)(100 - cat.HungryStatus);
-                    if (FoodResourse > needFood)
-                        FoodResourse -= needFood;
-                    else
-                    {
-                        needFood = (byte)FoodResourse;
-                        FoodResourse = 0;
-                    }
-                    cat.Feed(needFood);
-
-                    PrintStatus();
-                }
-            }
-
-            public void PrintStatus()
+        {
+            lock (printing)
             {
 
                 int leftPosition = Console.CursorLeft;
                 int topPosition = Console.CursorTop;
 
-                for (int i = 0; i < cats.Count; i++)
+                for (var i = 0; i < cats.Count; i++)
                 {
                     string message = cats[i].GetStatus("");
                     int color = Convert.ToInt32(message.Substring(0, 1));
@@ -66,14 +66,14 @@ namespace ConsoleApp6
                     Console.ResetColor();
                 }
                 Console.SetCursorPosition(0, CatsCount);
-                Console.Write($"Еды в вольере: + {FoodResourse}".PadRight(50));
+                Console.Write($"Еды в вольере: + {FoodResourse}".PadRight(50, ' '));
                 Console.SetCursorPosition(leftPosition, topPosition);
             }
+        }
 
-            public void Method()
-            {
-                throw new System.NotImplementedException();
-            }
+        private static void Method()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
